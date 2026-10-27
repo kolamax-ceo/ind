@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CaseDrop - Открытие кейсов CS2</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0b0e14;
+            color: #ffffff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #38bdf8;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        p {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+        
+        /* Рулетка */
+        .roulette-container {
+            width: 100%;
+            max-width: 400px;
+            background: #121824;
+            border: 2px solid #1e293b;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .selector {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            background: #f43f5e;
+            transform: translateX(-50%);
+            z-index: 10;
+            box-shadow: 0 0 10px #f43f5e;
+        }
+        .items-window {
+            display: flex;
+            gap: 10px;
+            transition: transform 4s cubic-bezier(0.15, 0.85, 0.35, 1);
+            will-change: transform;
+            padding: 10px 0;
+        }
+        .item-box {
+            min-width: 100px;
+            height: 100px;
+            background: #1e293b;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #334155;
+            flex-shrink: 0;
+            padding: 8px 5px;
+        }
+        .item-box.rare { border-color: #3b82f6; background: #1e3a8a; }
+        .item-box.epic { border-color: #a855f7; background: #581c87; }
+        .item-box.legendary { border-color: #facc15; background: #713f12; }
+
+        .item-img {
+            width: 65px;
+            height: 45px;
+            object-fit: contain;
+        }
+        .item-name {
+            font-size: 10px;
+            color: #cbd5e1;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+        .item-price {
+            font-size: 9px;
+            color: #94a3b8;
+        }
+
+        /* Список кейсов */
+        .cases-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .case-card {
+            background: #121824;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+        .case-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .case-price {
+            color: #facc15;
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        .open-btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+        .open-btn:active {
+            opacity: 0.8;
+        }
+        .open-btn:disabled {
+            background: #334155;
+            cursor: not-allowed;
+        }
+
+        #result {
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #4ade80;
+            text-align: center;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>CaseDrop 🎁</h1>
+        <p>Крути кейсы и выбивай скины CS2</p>
+    </header>
+
+    <!-- Окно рулетки -->
+    <div class="roulette-container">
+        <div class="selector"></div>
+        <div class="items-window" id="window">
+            <div class="item-box"><div class="item-name">Выбери кейс</div></div>
+            <div class="item-box"><div class="item-name">И жми</div></div>
+            <div class="item-box"><div class="item-name">Кнопку!</div></div>
+        </div>
+    </div>
+
+    <div id="result"></div>
+
+    <!-- Карточки кейсов -->
+    <div class="cases-grid">
+        <div class="case-card">
+            <div class="case-title">🔥 Новичок</div>
+            <div class="case-price">100 ₽</div>
+            <button class="open-btn" id="btn-novice" onclick="startRoulette('novice')">Открыть кейс</button>
+        </div>
+        
+        <div class="case-card">
+            <div class="case-title">💎 Премиум</div>
+            <div class="case-price">500 ₽</div>
+            <button class="open-btn" id="btn-premium" onclick="startRoulette('premium')">Открыть кейс</button>
+        </div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // База реальных скинов из CS2 с картинками
+        const itemsPool = [
+            { name: "P250 | Песчаные дюны", price: "5 ₽", class: "", img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpopuj7e1RfwPz3ZDxQ79e7m5S0k9v8NqjUqWfY_Y9zi-uV9IqjgVWyqBQ4N2imJteRJ1doZFrU_wTvlO7rhpe9uJyfymwj9x8vJt0/300fx300f" },
+            { name: "AK-47 | Красная линия", price: "800 ₽", class: "rare", img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot7HxfDhjxszJemkV08-jq5WYh8j3KqnUqWfY_Y9zi7uWrIrzigS3r0VpZjilJNSTcgU_YgzWq1m5kOu-hsW46JuY1zI97e3p304y/300fx300f" },
+            { name: "AWP | Азимов", price: "4500 ₽", class: "epic", img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5S0k9v8NqjUqWfY_Y9zi-uU4Irw2VWy_RE9MDr1cNTGIQA9N1iC-Fi8xbruk8S6uZvBnXRgsiYj7XnZn0W0hgYPMGUv16G9Vw/300fx300f" },
+            { name: "Нож-боярин | Дамаск", price: "15000 ₽", class: "legendary", img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04De7glKGKUH7urzFA957P3JYQUH_-O5g5KAk_LlPrrTj35Z_I8njrGU8d2m2wDj-UE4ZG6nIo6TIQJvZFiB8wW5w7zs18a4vp3Jn3oy6iUm5X7emkaxwUYbD_Oq87g/300fx300f" },
+            { name: "M4A4 | Император", price: "2800 ₽", class: "epic", img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou-6kejhz2v_Nfz5H_uO1gb-Gw_alIITBhGJf_NZlmO7P9o-n3AWy8kdsZGH2cdLDJgVqN1jWrwXoyem6gJK66p3BzHBmpykm7XvUnEa2hx5OabZqg6WdFlqYVvA/300fx300f" },
+            { name: "USP-S | Извилины", price: "150 ₽", class: "rare", img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpoo6m1FBRp3_bGcjhQ09-jq5WYh8j3KqnUqWfY_Y9zi7uWrN6n0QW2-RA9YW-iLISSd1A7YV3V-1C_x-i8hZe7up2YyyRn6nIn-z8WzvRh00kfcKUx0g/300fx300f" }
+        ];
+
+        function startRoulette(type) {
+            const windowEl = document.getElementById('window');
+            const resultEl = document.getElementById('result');
+            const btnNovice = document.getElementById('btn-novice');
+            const btnPremium = document.getElementById('btn-premium');
+
+            btnNovice.disabled = true;
+            btnPremium.disabled = true;
+            resultEl.innerText = "Крутим рулетку...";
+
+            let html = '';
+            let winningIndex = 25; 
+            let winningItem = null;
+
+            for (let i = 0; i < 40; i++) {
+                let randomItem = itemsPool[Math.floor(Math.random() * itemsPool.length)];
+                if (i === winningIndex) {
+                    winningItem = randomItem; 
+                }
+                html += `
+                    <div class="item-box ${randomItem.class}">
+                        <img src="${randomItem.img}" class="item-img" alt="skin">
+                        <div class="item-name">${randomItem.name}</div>
+                        <div class="item-price">${randomItem.price}</div>
+                    </div>
+                `;
+            }
+            windowEl.innerHTML = html;
+            windowEl.style.transition = 'none';
+            windowEl.style.transform = 'translateX(0px)';
+
+            setTimeout(() => {
+                let itemWidth = 110; 
+                let offset = (winningIndex * itemWidth) - 145; 
+                
+                windowEl.style.transition = 'transform 4s cubic-bezier(0.15, 0.85, 0.35, 1)';
+                windowEl.style.transform = `translateX(-${offset}px)`;
+            }, 50);
+
+            setTimeout(() => {
+                resultEl.innerText = `🎉 Поздравляем! Вам выпало: ${winningItem.name} (${winningItem.price})`;
+                btnNovice.disabled = false;
+                btnPremium.disabled = false;
+
+                try {
+                    tg.sendData(JSON.stringify({ prize: winningItem.name, price: winningItem.price }));
+                } catch (e) {
+                    console.log("Запущено вне Telegram, sendData пропущен.");
+                }
+            }, 4100);
+        }
+    </script>
+</body>
+</html>
