@@ -3,167 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CaseDrop - Открытие кейсов CS2</title>
+    <title>CaseDrop - Кейсы CS2</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #12141d; color: #fff; text-align: center; padding-bottom: 50px; }
-        header { background: #181b28; padding: 15px; font-size: 20px; font-weight: bold; border-bottom: 2px solid #232738; }
-        .balance-container { margin: 20px 0; font-size: 18px; }
-        .balance { color: #00ffcc; font-weight: bold; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #12141d;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1f2233;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+        .balance {
+            font-size: 18px;
+            color: #4cd137;
+            font-weight: bold;
+        }
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .case-card {
+            background: #1f2233;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #2f3542;
+            transition: 0.3s;
+        }
+        .case-card:hover {
+            border-color: #fbc531;
+            transform: translateY(-5px);
+        }
+        .case-card img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+        .case-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .btn {
+            background: #e84118;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .btn:hover {
+            background: #c23616;
+        }
         
-        .cases-grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; padding: 0 20px; margin-bottom: 30px; }
-        .case-card { background: #1c2030; border-radius: 12px; width: 160px; padding: 15px; border: 2px solid #282d42; cursor: pointer; transition: 0.2s; }
-        .case-card:hover { transform: translateY(-5px); border-color: #00ffcc; }
-        .case-card img { width: 100%; height: 100px; object-fit: contain; margin-bottom: 10px; }
-        .case-title { font-size: 14px; font-weight: bold; margin-bottom: 5px; }
-        .case-price { color: #00ffcc; font-size: 14px; }
-
         /* Рулетка */
-        .roulette-container { display: none; margin: 30px auto; width: 90%; max-width: 600px; background: #181b28; border-radius: 15px; padding: 20px; border: 2px solid #2d334a; }
-        .roulette-window { overflow: hidden; width: 100%; height: 140px; background: #0e1017; border-radius: 10px; position: relative; display: flex; align-items: center; border: 2px solid #00ffcc; }
-        .roulette-pointer { position: absolute; top: 0; bottom: 0; left: 50%; width: 4px; background: #ff0055; transform: translateX(-50%); z-index: 10; }
-        .strip { display: flex; position: absolute; left: 0; transition: left 4s cubic-bezier(0.15, 0.85, 0.35, 1); }
-        
-        .item-card { min-width: 120px; height: 120px; background: #1c2030; margin: 0 5px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px; border-bottom: 4px solid #777; }
-        .item-card img { width: 75px; height: 50px; object-fit: contain; margin-bottom: 5px; }
-        .item-name { font-size: 10px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-        .item-price { font-size: 11px; color: #00ffcc; margin-top: 3px; }
+        #rouletteContainer {
+            display: none;
+            margin-top: 30px;
+            background: #1f2233;
+            padding: 25px;
+            border-radius: 12px;
+            position: relative;
+        }
+        .roulette-window {
+            width: 100%;
+            max-width: 600px;
+            height: 160px;
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+            background: #151723;
+            border-radius: 10px;
+            border: 2px solid #353b48;
+        }
+        .pointer {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            background: #fbc531;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        .strip {
+            display: flex;
+            position: absolute;
+            left: 0;
+            top: 10px;
+            transition: left 4s cubic-bezier(0.15, 0.85, 0.35, 1);
+        }
+        .item-card {
+            min-width: 130px;
+            height: 140px;
+            background: #2f3542;
+            margin-right: 10px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            border-bottom: 4px solid #718093;
+        }
+        .item-card img {
+            width: 75px;
+            height: 55px;
+            object-fit: contain;
+            margin-bottom: 5px;
+        }
+        .item-name {
+            font-size: 11px;
+            font-weight: bold;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 100%;
+        }
+        .item-price {
+            font-size: 10px;
+            color: #a4b0be;
+            margin-top: 3px;
+        }
 
         /* Цвета редкости */
         .grade-consumer { border-bottom-color: #b0c3d9; }
         .grade-milspec { border-bottom-color: #4b69ff; }
         .grade-restricted { border-bottom-color: #d32ce6; }
         .grade-classified { border-bottom-color: #eb4b4b; }
-        .grade-covert { border-bottom-color: #e4ae33; }
+        .grade-covert { border-bottom-color: #e4ae39; }
         .grade-rare { border-bottom-color: #ffd700; }
 
-        .btn { background: #00ffcc; color: #12141d; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; transition: 0.2s; }
-        .btn:hover { background: #00b38f; color: #fff; }
-
         /* Модальное окно выигрыша */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100; }
-        .modal-content { background: #1c2030; padding: 30px; border-radius: 15px; text-align: center; max-width: 350px; width: 90%; border: 2px solid #00ffcc; }
-        .modal-content img { width: 140px; height: 90px; object-fit: contain; margin: 15px 0; }
+        #winModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .modal-content {
+            background: #1f2233;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 320px;
+            width: 100%;
+            border: 2px solid #fbc531;
+        }
+        .modal-content img {
+            width: 140px;
+            height: 100px;
+            object-fit: contain;
+            margin: 15px 0;
+        }
     </style>
 </head>
 <body>
 
-    <header>CaseDrop - 50 Скинов CS2</header>
+    <header>
+        <h2>CaseDrop</h2>
+        <div class="balance">Баланс: <span id="balance">1000</span> ₽</div>
+    </header>
 
-    <div class="balance-container">
-        Баланс: <span class="balance" id="balance">10000</span> ₽
-    </div>
-
-    <h2>Выберите кейс:</h2>
     <div class="cases-grid">
-        <div class="case-card" onclick="openCase(100)">
-            <img src="https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f" alt="Кейс">
+        <div class="case-card">
+            <img src="https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot7HxfDhjxszJemkV0924n4m8kvnnN7LEmyUE6pMgi7_Ho4ql3wbiqBVrNTzzLNDBJA88YFmCrFLqwe_vhJO-vZrNyXswvCMmsXqMlxKxwUsfSuNusbeOAw/360fx360f" alt="Кейс">
             <div class="case-title">Базовый кейс</div>
-            <div class="case-price">100 ₽</div>
+            <button class="btn" onclick="openCase(100)">Открыть (100 ₽)</button>
         </div>
-        <div class="case-card" onclick="openCase(500)">
-            <img src="https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f" alt="Кейс">
-            <div class="case-title">Премиум кейс</div>
-            <div class="case-price">500 ₽</div>
+        <div class="case-card">
+            <img src="https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou-6kejhz2v_Nfz5H_uO1gb-Gw_alIITGnGBg-sR_-b7S88mkjQbi-kVtN2qmcN6TegM3Y12Dr1m_k-rqhJe9uJ3JySFiuyZz7CvemBHgn1gSOeM3jE4h/360fx360f" alt="Кейс">
+            <div class="case-title">Элитный кейс</div>
+            <button class="btn" onclick="openCase(500)">Открыть (500 ₽)</button>
         </div>
     </div>
 
-    <!-- Рулетка -->
-    <div class="roulette-container" id="rouletteContainer">
-        <h3 id="caseOpeningTitle">Открытие кейса...</h3>
+    <div id="rouletteContainer">
+        <h3 id="caseOpeningTitle" style="margin-bottom: 15px;">Открытие кейса...</h3>
         <div class="roulette-window">
-            <div class="roulette-pointer"></div>
+            <div class="pointer"></div>
             <div class="strip" id="strip"></div>
         </div>
-        <button class="btn" id="openBtn" onclick="startRolling()" style="display:none;">Открыть заново</button>
+        <button class="btn" id="openBtn" style="margin-top: 20px; display: none;" onclick="resetRoulette()">ВЫБРАТЬ ДРУГОЙ КЕЙС</button>
     </div>
 
-    <!-- Модалка выигрыша -->
-    <div class="modal" id="winModal">
+    <!-- Модальное окно -->
+    <div id="winModal">
         <div class="modal-content">
             <h3>Вы выиграли!</h3>
             <img id="winImg" src="" alt="Skin">
-            <h4 id="winName">Название</h4>
-            <p id="winPrice" style="color: #00ffcc; margin: 10px 0;"></p>
+            <div id="winName" style="font-weight: bold; font-size: 16px; margin-bottom: 5px;"></div>
+            <div id="winPrice" style="color: #4cd137; margin-bottom: 20px;"></div>
             <button class="btn" onclick="closeModal()">Забрать</button>
         </div>
     </div>
 
     <script>
-        let balance = 10000;
-        let currentCasePrice = 100;
+        let balance = 1000;
 
-        // База из 50 скинов CS2 с реальными картинками из Steam
         const allSkins = [
-            // Дешевые (Ширпотреб / Промышленное)
-            {name: "SG 553 | Поверхностная закалка", price: 15, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgposr-kLAtl7PLZTjlH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-consumer"},
-            {name: "P250 | Песчаная дюна", price: 5, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgposr-kLAtl7PLfTjlH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-consumer"},
-            {name: "Nova | Лесопилка", price: 12, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpOvL2KEVN2wODNJThO-N2_gZOJh8j3KqnUqWfY_cl0i7rA9I2m2Qbj-kZrMWiicNOQegJsMlyFrlfrxb-6gJO96Zyamydn7iQm-z-DyPFe708/360fx360f", class: "grade-consumer"},
-            {name: "MP9 | Смыв", price: 20, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou7u1FBRv7PDJYQJD_9m7mo-0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-consumer"},
-            {name: "MAC-10 | Карамель", price: 25, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou7u1FBRv7PDJYQJD_9m7mo-0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-consumer"},
-            {name: "PP-Bizon | Картель", price: 30, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-milspec"},
-            {name: "Glock-18 | Обычная вода", price: 45, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgposbaqKAxl7PLKYgFH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-milspec"},
-            {name: "USP-S | Сыворотка", price: 60, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpoov-kKAxl7PLKYgFH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-milspec"},
-            {name: "FAMAS | Дракон", price: 75, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpopammOwJf1OD3cupL_-O5g5S0k8jgOP7VqWZU7cR1j9bN_Iv9nBrkqhBsZmCldo_EegJvZV3YrFnswe3rhJPt7subn3swvyNytX7D30Wvz7cTf3N3/360fx360f", class: "grade-restricted"},
-            {name: "Galil AR | Леденец", price: 90, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpOs7v1FA957PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-restricted"},
-            
-            // Средние (Армейское / Запрещенное)
-            {name: "M4A4 | Обезьянье дело", price: 150, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou-6kejhz2v_Nfz5H_uO1gb-Gw_alIITGnGBg-sR_-b7S88mkjQbi-kVtN2qmcN6TegM3Y12Dr1m_k-rqhJe9uJ3JySFiuyZz7CvemBHgn1gSOeM3jE4h/360fx360f", class: "grade-restricted"},
-            {name: "AK-47 | Красная линия", price: 350, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot7HxfDhjxszJemkV0924n4m8kvnnN7LEmyUE6pMgi7_Ho4ql3wbiqBVrNTzzLNDBJA88YFmCrFLqwe_vhJO-vZrNyXswvCMmsXqMlxKxwUsfSuNusbeOAw/360fx360f", class: "grade-classified"},
-            {name: "AWP | Ахерон", price: 220, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-restricted"},
-            {name: "Desert Eagle | Ржавый ковбой", price: 180, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgposr-kLAtl7PLZTjlH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-milspec"},
-            {name: "USP-S | Извилины", price: 290, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpoov-kKAxl7PLKYgFH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-milspec"},
-            {name: "M4A1-S | Нитро", price: 110, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou-6kejhz2v_Nfz5H_uO1gb-Gw_alIITGnGBg-sR_-b7S88mkjQbi-kVtN2qmcN6TegM3Y12Dr1m_k-rqhJe9uJ3JySFiuyZz7CvemBHgn1gSOeM3jE4h/360fx360f", class: "grade-consumer"},
-            {name: "Glock-18 | Дух воды", price: 420, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgposbaqKAxl7PLKYgFH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-restricted"},
-            {name: "P90 | Азимов", price: 480, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpopu1kjhHzkLzNYhSF79-Jlo-Ohcj5NZfYqWZU7cR1j9bN_Iv9nBrkqhBsZmCldo_EegJvZV3YrFnswe3rhJPt7subn3swvyNytX7D30Wvz7cTf3N3/360fx360f", class: "grade-classified"},
-            {name: "SSG 08 | Кровавая пелена", price: 380, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpopammOwJf1OD3cupL_-O5g5S0k8jgOP7VqWZU7cR1j9bN_Iv9nBrkqhBsZmCldo_EegJvZV3YrFnswe3rhJPt7subn3swvyNytX7D30Wvz7cTf3N3/360fx360f", class: "grade-restricted"},
+            {name: "MP9 | Закат", price: 60, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpopammOwJf1OD3cupL_-O5g5S0k8jgOP7VqWZU7cR1j9bN_Iv9nBrkqhBsZmCldo_EegJvZV3YrFnswe3rhJPt7subn3swvyNytX7D30Wvz7cTf3N3/360fx360f", class: "grade-consumer"},
             {name: "AK-47 | Сланец", price: 310, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot7HxfDhjxszJemkV0924n4m8kvnnN7LEmyUE6pMgi7_Ho4ql3wbiqBVrNTzzLNDBJA88YFmCrFLqwe_vhJO-vZrNyXswvCMmsXqMlxKxwUsfSuNusbeOAw/360fx360f", class: "grade-milspec"},
-
-            // Дорогие (Засекреченные / Тайные)
             {name: "M4A1-S | Огненный змей", price: 1500, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou-6kejhz2v_Nfz5H_uO1gb-Gw_alIITGnGBg-sR_-b7S88mkjQbi-kVtN2qmcN6TegM3Y12Dr1m_k-rqhJe9uJ3JySFiuyZz7CvemBHgn1gSOeM3jE4h/360fx360f", class: "grade-classified"},
             {name: "AWP | Дикий огонь", price: 2100, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-covert"},
-            {name: "AK-47 | Неоновая революция", price: 1800, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot7HxfDhjxszJemkV0924n4m8kvnnN7LEmyUE6pMgi7_Ho4ql3wbiqBVrNTzzLNDBJA88YFmCrFLqwe_vhJO-vZrNyXswvCMmsXqMlxKxwUsfSuNusbeOAw/360fx360f", class: "grade-covert"},
-            {name: "Desert Eagle | Пламя", price: 3200, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgposr-kLAtl7PLZTjlH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-classified"},
-            {name: "M4A4 | Император", price: 2500, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou-6kejhz2v_Nfz5H_uO1gb-Gw_alIITGnGBg-sR_-b7S88mkjQbi-kVtN2qmcN6TegM3Y12Dr1m_k-rqhJe9uJ3JySFiuyZz7CvemBHgn1gSOeM3jE4h/360fx360f", class: "grade-covert"},
-            {name: "USP-S | Убийца подтвержден", price: 4100, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpoov-kKAxl7PLKYgFH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-covert"},
-            {name: "Glock-18 | Градиент", price: 5000, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgposbaqKAxl7PLKYgFH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-classified"},
-            {name: "AK-47 | Вулкан", price: 6500, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot7HxfDhjxszJemkV0924n4m8kvnnN7LEmyUE6pMgi7_Ho4ql3wbiqBVrNTzzLNDBJA88YFmCrFLqwe_vhJO-vZrNyXswvCMmsXqMlxKxwUsfSuNusbeOAw/360fx360f", class: "grade-covert"},
-            {name: "AWP | Поток информации", price: 7800, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-covert"},
-            {name: "M4A1-S | Сайрекс", price: 3400, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou-6kejhz2v_Nfz5H_uO1gb-Gw_alIITGnGBg-sR_-b7S88mkjQbi-kVtN2qmcN6TegM3Y12Dr1m_k-rqhJe9uJ3JySFiuyZz7CvemBHgn1gSOeM3jE4h/360fx360f", class: "grade-classified"},
-
-            // Элитные / Ножи / Перчатки (Ультра-редкие)
             {name: "Бабочка | Кровавая паутина", price: 25000, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpovbSxLEJyVzNHzLj369i5gYmLkuHXJ4Tck29Y_cg_g-uWp9qn3ge2-kBtNj-lLI6VegI3Z1zT81G2xbu705Tvu8icmyM3snQm4XmJnhK00x5JcLE7gwvO9w/360fx360f", class: "grade-rare"},
-            {name: "Керамбит | Градиент", price: 45000, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpovbSxLEJyVzNHzLj369i5gYmLkuHXJ4Tck29Y_cg_g-uWp9qn3ge2-kBtNj-lLI6VegI3Z1zT81G2xbu705Tvu8icmyM3snQm4XmJnhK00x5JcLE7gwvO9w/360fx360f", class: "grade-rare"},
-            {name: "Спортивные перчатки | Спидборт", price: 18000, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpovbSxLEJyVzNHzLj369i5gYmLkuHXJ4Tck29Y_cg_g-uWp9qn3ge2-kBtNj-lLI6VegI3Z1zT81G2xbu705Tvu8icmyM3snQm4XmJnhK00x5JcLE7gwvO9w/360fx360f", class: "grade-rare"},
-            {name: "Штык-нож M9 | Поверхностная закалка", price: 30000, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpovbSxLEJyVzNHzLj369i5gYmLkuHXJ4Tck29Y_cg_g-uWp9qn3ge2-kBtNj-lLI6VegI3Z1zT81G2xbu705Tvu8icmyM3snQm4XmJnhK00x5JcLE7gwvO9w/360fx360f", class: "grade-rare"},
-            {name: "AWP | История о драконе", price: 150000, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-rare"},
-            {name: "Нож-бабочка | Убийство", price: 55000, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpovbSxLEJyVzNHzLj369i5gYmLkuHXJ4Tck29Y_cg_g-uWp9qn3ge2-kBtNj-lLI6VegI3Z1zT81G2xbu705Tvu8icmyM3snQm4XmJnhK00x5JcLE7gwvO9w/360fx360f", class: "grade-rare"},
-            {name: "Когтит | Волны", price: 40000, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpovbSxLEJyVzNHzLj369i5gYmLkuHXJ4Tck29Y_cg_g-uWp9qn3ge2-kBtNj-lLI6VegI3Z1zT81G2xbu705Tvu8icmyM3snQm4XmJnhK00x5JcLE7gwvO9w/360fx360f", class: "grade-rare"},
-            {name: "Студийные перчатки | Амфибия", price: 22000, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpovbSxLEJyVzNHzLj369i5gYmLkuHXJ4Tck29Y_cg_g-uWp9qn3ge2-kBtNj-lLI6VegI3Z1zT81G2xbu705Tvu8icmyM3snQm4XmJnhK00x5JcLE7gwvO9w/360fx360f", class: "grade-rare"},
-            {name: "Складной нож | Сажа", price: 12000, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpovbSxLEJyVzNHzLj369i5gYmLkuHXJ4Tck29Y_cg_g-uWp9qn3ge2-kBtNj-lLI6VegI3Z1zT81G2xbu705Tvu8icmyM3snQm4XmJnhK00x5JcLE7gwvO9w/360fx360f", class: "grade-rare"},
-            {name: "Охотничий нож | Лес", price: 9500, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpovbSxLEJyVzNHzLj369i5gYmLkuHXJ4Tck29Y_cg_g-uWp9qn3ge2-kBtNj-lLI6VegI3Z1zT81G2xbu705Tvu8icmyM3snQm4XmJnhK00x5JcLE7gwvO9w/360fx360f", class: "grade-rare"},
-
-            // Еще 20 сбалансированных скинов для полноты рулетки
-            {name: "MAC-10 | Неоновый наездник", price: 400, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpou7u1FBRv7PDJYQJD_9m7mo-0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-classified"},
-            {name: "Galil AR | Эко", price: 320, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpOs7v1FA957PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-restricted"},
-            {name: "AUG | Хамелеон", price: 210, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-restricted"},
-            {name: "SG 553 | Кредит", price: 130, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgposr-kLAtl7PLZTjlH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-milspec"},
-            {name: "CZ75-Auto | Изумруд", price: 250, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpoov-kKAxl7PLKYgFH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-milspec"},
-            {name: "Tec-9 | Топливный инжектор", price: 540, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgposbaqKAxl7PLKYgFH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-restricted"},
-            {name: "Five-SeveN | Обезьянье дело", price: 340, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpoov-kKAxl7PLKYgFH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-restricted"},
-            {name: "XM1014 | Вредоносное ПО", price: 80, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpOvL2KEVN2wODNJThO-N2_gZOJh8j3KqnUqWfY_cl0i7rA9I2m2Qbj-kZrMWiicNOQegJsMlyFrlfrxb-6gJO96Zyamydn7iQm-z-DyPFe708/360fx360f", class: "grade-consumer"},
-            {name: "MAG-7 | Жар птица", price: 160, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpOvL2KEVN2wODNJThO-N2_gZOJh8j3KqnUqWfY_cl0i7rA9I2m2Qbj-kZrMWiicNOQegJsMlyFrlfrxb-6gJO96Zyamydn7iQm-z-DyPFe708/360fx360f", class: "grade-milspec"},
-            {name: "Negev | Мразь", price: 45, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-consumer"},
-            {name: "Sawed-Off | Медная сетка", price: 35, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-consumer"},
-            {name: "PP-Bizon | Нейросеть", price: 115, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-milspec"},
-            {name: "UMP-45 | Плеть", price: 140, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-milspec"},
-            {name: "MP7 | Циркуляр", price: 190, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-restricted"},
-            {name: "MP5-SD | Фосфор", price: 280, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-restricted"},
-            {name: "FAMAS | Сержант", price: 220, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpopammOwJf1OD3cupL_-O5g5S0k8jgOP7VqWZU7cR1j9bN_Iv9nBrkqhBsZmCldo_EegJvZV3YrFnswe3rhJPt7subn3swvyNytX7D30Wvz7cTf3N3/360fx360f", class: "grade-milspec"},
-            {name: "Galil AR | Огненный шторм", price: 390, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpOs7v1FA957PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-restricted"},
-            {name: "SG 553 | Ультрафиолет", price: 410, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgposr-kLAtl7PLZTjlH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-restricted"},
-            {name: "AUG | Токио", price: 530, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJD_9O7m5O0m_7zO6_umntd8-Z5g-7J4cuijga2r0RvMWvzd4eTIgJrNArW_Fjslu7u18e0tczNyXVkvCd35Xvfm0G-h00ZPLPj062OQw/360fx360f", class: "grade-classified"},
-            {name: "P250 | Механо-пушка", price: 620, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpoov-kKAxl7PLKYgFH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-classified"}
+            {name: "USP-S | Убийца подтвержден", price: 4100, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpoov-kKAxl7PLKYgFH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-covert"},
+            {name: "Desert Eagle | Пламя", price: 3200, img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgposr-kLAtl7PLZTjlH_9mkgL-OlvXxDLjQjWA97cZmhuDG_Zi72wewqhBvN22hd9SQcgM3ZAzY-1i_xLjrh5Duu8jNynpg7Ccg7GHfwUJvD9oT1Q/360fx360f", class: "grade-classified"}
         ];
 
         function openCase(price) {
@@ -172,12 +237,11 @@
                 return;
             }
             balance -= price;
-            currentCasePrice = price;
             document.getElementById('balance').innerText = balance;
 
             document.getElementById('rouletteContainer').style.display = 'block';
-            document.getElementById('openBtn').style.display = 'none';
             document.getElementById('caseOpeningTitle').innerText = `Открытие кейса (${price} ₽)...`;
+            document.getElementById('openBtn').style.display = 'none';
 
             generateStrip();
             
@@ -186,13 +250,15 @@
             }, 100);
         }
 
+        let winningSkinData = null;
+
         function generateStrip() {
             const strip = document.getElementById('strip');
             strip.innerHTML = '';
             strip.style.transition = 'none';
             strip.style.left = '0px';
 
-            // Генерируем 60 случайных предметов для полосы прокрутки
+            // Генерируем ленту из 60 элементов
             for (let i = 0; i < 60; i++) {
                 const randomSkin = allSkins[Math.floor(Math.random() * allSkins.length)];
                 const card = document.createElement('div');
@@ -202,31 +268,26 @@
                     <div class="item-name">${randomSkin.name}</div>
                     <div class="item-price">${randomSkin.price} ₽</div>
                 `;
-                // Сохраняем данные скина в DOM-элемент
-                card.dataset.name = randomSkin.name;
-                card.dataset.price = randomSkin.price;
-                card.dataset.img = randomSkin.img;
                 strip.appendChild(card);
             }
         }
 
-        let winningSkinData = null;
-
         function spinRoulette() {
             const strip = document.getElementById('strip');
-            const cardWidth = 130; // 120px ширина + 10px отступы
-            // Выбираем победный элемент примерно на 45-й позиции
-            const winningIndex = 45; 
+            const cardWidth = 140; // ширина карточки (130px) + отступ (10px)
+            const winningIndex = 45; // Точный индекс выигрышной карточки на ленте
             
             const winningCard = strip.children[winningIndex];
+            
+            // Жестко считываем данные именно той карточки, на которую укажет стрелочка
             winningSkinData = {
-                name: winningCard.dataset.name,
-                price: parseInt(winningCard.dataset.price),
-                img: winningCard.dataset.img
+                name: winningCard.querySelector('.item-name').innerText,
+                price: parseInt(winningCard.querySelector('.item-price').innerText),
+                img: winningCard.querySelector('img').src
             };
 
-            // Сдвигаем ленту так, чтобы победный элемент оказался ровно по центру указателя
-            const offset = (winningIndex * cardWidth) - (window.innerWidth > 600 ? 300 : window.innerWidth / 2) + (cardWidth / 2);
+            // Вычисляем смещение до центра экрана рулетки
+            const offset = (winningIndex * cardWidth) - (300) + (cardWidth / 2);
             
             strip.style.transition = 'left 4s cubic-bezier(0.15, 0.85, 0.35, 1)';
             strip.style.left = `-${offset}px`;
@@ -242,15 +303,20 @@
             document.getElementById('winPrice').innerText = `Цена: ${skin.price} ₽`;
             document.getElementById('winModal').style.display = 'flex';
 
-            // Возвращаем стоимость выигрыша на баланс
+            // Зачисляем выигрыш на баланс
             balance += skin.price;
             document.getElementById('balance').innerText = balance;
+            
             document.getElementById('caseOpeningTitle').innerText = `Вы выиграли: ${skin.name} (${skin.price} ₽)`;
             document.getElementById('openBtn').style.display = 'inline-block';
         }
 
         function closeModal() {
             document.getElementById('winModal').style.display = 'none';
+        }
+
+        function resetRoulette() {
+            document.getElementById('rouletteContainer').style.display = 'none';
         }
     </script>
 </body>
